@@ -1,0 +1,117 @@
+---
+title: "Car Prices"
+output: 
+  html_document:
+    theme: cerulean
+    code_folding: hide
+    keep_md: TRUE
+---
+
+<br>
+
+## Background
+
+For my analysis I chose to look into the relationship between car price and mileage for the most expensive cars taking make, model and type into consideration using the CarPrices data frame. I ended up with a dataset with 49 rows of cars which cost at least $39,000. My model for the multiple linear regression I will perform is listed below:
+
+$$
+  Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3} + \beta_4 X_{i4} + \beta_5 X_{i5} + \beta_6 X_{i6} + \beta_7 X_{i7}+ \epsilon_i
+$$
+$$
+  α = 0.05
+$$
+
+
+
+| Coefficient | X-Variable   |  Meaning  |
+|---------|----------|-------------------------------------------------|
+$\beta_0$  |  | The average cost of a Corvette Convertable with zero miles |
+ $\beta_1$\rule{0pt}{16pt}  | $X_{i1} =$ Vehicle Mileage | Effect of each mile on average price |[4pt]
+ $\beta_2$   |  $X_{i2} = \left\{\begin{array}{ll} 1, & \text{if Model} = \text{CTS-V} \\ 0, & \text{if Model}\neq \text{CTS-V} \end{array}\right.$ | How much more or less a CST-V Sedan costs on average over a Corvette Convertable |
+ $\beta_3$   |  $X_{i3} = \left\{\begin{array}{ll} 1, & \text{if Model} = \text{Deville} \\ 0, & \text{if Model}\neq \text{Deville} \end{array}\right.$ | How much more or less a Deville Sedan costs on average over a Corvette Convertable |
+ $\beta_4$   |  $X_{i4} = \left\{\begin{array}{ll} 1, & \text{if Model} = \text{STS-V6} \\ 0, & \text{if Model}\neq \text{STS-V6} \end{array}\right.$ | How much more or less a STS-V6 Sedan costs on average over a Corvette Convertable |
+ $\beta_5$   |  $X_{i5} = \left\{\begin{array}{ll} 1, & \text{if Model} = \text{STS-V8} \\ 0, & \text{if Model}\neq \text{STS-V8} \end{array}\right.$ | How much more or less a STS-V8 Sedan costs on average over a Corvette Convertable |
+ $\beta_6$   |  $X_{i6} = \left\{\begin{array}{ll} 1, & \text{if Model} = \text{XLR-V8} \\ 0, & \text{if Model}\neq \text{XLR-V8} \end{array}\right.$ | How much more or less a XLR-V8 Convertable costs on average over a Convertable Corvette |
+ $\beta_7$   |  $X_{i7} = \left\{\begin{array}{ll} 1, & \text{if Model} = \text{Corvette Coupe} \\ 0, & \text{if Model}\neq \text{Corvette Coupe} \end{array}\right.$ | How much more or less a Corvette Coupe costs on average over a Corvette Convertable |
+
+
+```{r message=FALSE, warning=FALSE}
+# Be sure to download the CarPrices.csv file and save it
+# into your Data folder prior to knitting this file.
+
+library(pander)
+library(tidyverse)
+library(plotly)
+library(mosaic)
+CarPrices <- read.csv("~/Documents/M325_Git/Data/CarPrices.csv", header=TRUE)
+CarPrices.Ex <- droplevels(filter(CarPrices,Price>= 39000))
+CarType.Ex.lm <- lm(data=CarPrices.Ex, Price~Mileage + interaction(Model,Type))
+# Remember, to get the CarPrices data into your Console you have
+# to use the "Import Dataset" option in the "Environment" window.
+```
+## Statistical Analysis
+
+Before continuing on with this analysis a simple qq-plot inspection shows that this data is fairly normal and we are safe to continue on with investigating this dataset.
+
+```{r message=FALSE, warning=FALSE}
+par(mfrow=c(1,2), mai=c(1,1,1,.2))
+ plot(CarType.Ex.lm, which=1:2)
+ 
+ par(mai=c(.8,1,0.1,.2))
+plot(CarType.Ex.lm$residuals, ylab="Residuals", las=1, cex.axis=.8)
+```
+
+After performing a linear regression test I have found that every car tyoe had a P-value which indicated a need to fail to reject the idea that there is no relationship between price and mileage after taking make, model and type into consideration. Every other car showed some form of relationship.
+
+```{r message=FALSE, warning=FALSE}
+
+pander(summary(CarType.Ex.lm))
+```
+
+
+
+```{r, include=FALSE}
+#x <- seq(0,40000,100)
+
+#yCTS_V <- predict(CarType.Ex.lm, data.frame(Model="CST-V", Type="Sedan",Mileage=x))
+#yDeville <- predict(CarType.Ex.lm, data.frame(Model="Deville", Type="Sedan",Mileage=x))
+#ySTS_V6 <- predict(CarType.Ex.lm, data.frame(Model="STS-V6", Type="Sedan",Mileage=x))
+#ySTS_V8 <- predict(CarType.Ex.lm, data.frame(Model="STS-V8", Type="Sedan",Mileage=x))
+#yXLR_V8 <- predict(CarType.Ex.lm, data.frame(Model="XLR-V8", Type="Convertable",Mileage=x))
+#yCorvette.Con <- predict(CarType.Ex.lm, data.frame(Model="Corvette", Type="Convertable",Mileage=x))
+#yCorvette.Cou <- predict(CarType.Ex.lm, data.frame(Model="Corvette", Type="Coupe",Mileage=x))
+```
+
+```{r}
+
+
+
+```
+
+
+
+
+```{r message=FALSE, warning=FALSE}
+palette(c("skyblue4","firebrick","skyblue","sienna1","gray","sienna4","darkorange"))
+plot(Price ~ Mileage, data=CarPrices.Ex, pch=16, col=interaction(Model, Type), xlim=c(0,50000))
+abline(CarType.Ex.lm$coef[1]                      , CarType.Ex.lm$coef[2], col=palette()[1])
+abline(CarType.Ex.lm$coef[1]+CarType.Ex.lm$coef[3], CarType.Ex.lm$coef[2], col=palette()[2])
+abline(CarType.Ex.lm$coef[1]+CarType.Ex.lm$coef[4], CarType.Ex.lm$coef[2], col=palette()[3])
+abline(CarType.Ex.lm$coef[1]+CarType.Ex.lm$coef[5], CarType.Ex.lm$coef[2], col=palette()[4])
+abline(CarType.Ex.lm$coef[1]+CarType.Ex.lm$coef[6], CarType.Ex.lm$coef[2], col=palette()[5])
+abline(CarType.Ex.lm$coef[1]+CarType.Ex.lm$coef[7], CarType.Ex.lm$coef[2], col=palette()[6])
+abline(CarType.Ex.lm$coef[1]+CarType.Ex.lm$coef[8], CarType.Ex.lm$coef[2], col=palette()[7])
+legend("topright",CarType.Ex.lm$xlevels$`interaction(Model, Type)`, lty=1, lwd=5, col=palette(), cex=0.7)
+```
+
+
+
+
+```{r message=FALSE, warning=FALSE}
+#ggtrend <-ggplot(data=CarPrices.Ex, aes(x=Mileage, y=Price, col=Model:Type)) +
+ # geom_point() + stat_smooth(method="lm", se=FALSE, fullrange = T) + 
+  #ggtitle("Price of Cars by Model and Type")
+#ggplotly(ggtrend)
+```
+
+
+

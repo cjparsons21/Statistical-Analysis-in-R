@@ -1,0 +1,120 @@
+---
+title: "MyPermutationTest"
+author: "Me"
+date: "7/10/2018"
+output: 
+  html_document:
+    theme: cerulean
+    code_folding: hide
+    keep_md: TRUE
+---
+```{r message=FALSE, warning=FALSE}
+library(plotly)
+library(pander)
+library(tidyverse)
+library(mosaic)
+library(lubridate)
+library(pander)
+```
+
+```{r}
+z_kwh<-(Utilities$kwh-mean(Utilities$kwh))/sd(Utilities$kwh)
+z_ccf<-(Utilities$ccf-mean(Utilities$ccf))/sd(Utilities$ccf)
+```
+
+```{r}
+late <- read.csv("~/Documents/M325_Git/Data/late.csv", header=TRUE)
+Late <- reshape(late,
+                varying = paste("Week",1:20, sep=""), 
+                v.names = "No.ofLateChildren",
+                timevar = "Week", 
+                times = 1:20, 
+                idvar = "Center",
+                new.row.names = 1:200,
+                direction = "long")
+Late$Period <- cut(Late$Week, c(0,4,16,Inf), labels = c("Pre-Fine","Fine","Post-Fine"))
+Late$Proportion<- round(Late$No.ofLateChildren/Late$No.ofChidren,2)
+```
+
+```{r}
+AMZN <- read.csv("~/Documents/M325_Git/Data/AMZN-stock.csv")
+AMZN$month <- month(strptime(AMZN$Date, format="%Y-%m-%d"))
+AMZN$year <- year(strptime(AMZN$Date, format="%Y-%m-%d"))
+AMZN$oc_diff <- AMZN$Close-AMZN$Open
+AMZN$adj_open <- c(AMZN$Open[-1],NA)
+AMZN$adj_close <- c(AMZN$Close[-length(AMZN$Close)],NA)
+AMZN$adj_co_diff <- (AMZN$adj_open-AMZN$adj_close)/AMZN$adj_close
+AMZN$oc_diff_per <- (AMZN$Close-AMZN$Open)/AMZN$Open
+AMZN$co_diff <- AMZN$adj_open-AMZN$adj_close
+
+```
+
+
+Permutation of T-Test analysis
+
+```{r}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+
+pander((Utilities.Test <- t.test(z_kwh,z_ccf,paired=T)))
+
+observedTestStat.t <- Utilities.Test$statistic
+
+N <- 2000
+permutedTestStats.t <- rep(NA, N)
+for (i in 1:N){
+  permutedData.t <- sample(x=c(-1,1), size=117, replace=TRUE)
+  permutedTest.t <- t.test((z_kwh-z_ccf) * permutedData.t, data = Utilities)
+  permutedTestStats.t[i] <- permutedTest.t$statistic
+}
+
+hist(permutedTestStats.t, col = "skyblue")
+abline(v = observedTestStat.t, col = "red", lwd = 3)
+
+2*sum(permutedTestStats.t <= observedTestStat.t)/N
+```
+
+Permutation of ANOVA analysis
+
+```{r}
+
+Late.aov <- aov(data=Late,Proportion~Treatment+ Period +Treatment:Period)
+observedTestStat.a <- summary(Late.aov)[[1]]$`F value`[1]
+pander(summary(Late.aov))
+
+N <- 2000
+permutedTestStats.a <- rep(NA, N)
+for (i in 1:N){
+  permutedData.a <- sample(Late$Proportion)
+  permutedTest.a <- aov(permutedData.a ~ Treatment, data = Late)
+  permutedTestStats.a[i] <- summary(permutedTest.a)[[1]]$`F value`[1]
+}
+
+
+hist(permutedTestStats.a, col = "skyblue", xlim = c(0,16))
+abline(v = observedTestStat.a, col = "red", lwd = 3)
+
+2*sum(permutedTestStats.a >= observedTestStat.a)/N
+
+```
+
+Permutation of a linear regression analysis
+```{r}
+
+AMZN_lm <- lm(Close~Open, data=AMZN)
+observedTestStat.lm <- summary(AMZN_lm)[[4]][2,3]
+pander(summary(AMZN_lm))
+
+N <- 2000
+permutedTestStats.lm <- rep(NA, N)
+for (i in 1:N){
+  permutedData.lm <- sample(AMZN$Open)
+  permutedTest.lm <- lm(permutedData.lm ~ Close, data = AMZN)
+  permutedTestStats.lm[i] <- summary(permutedTest.lm)[[4]][2,3]
+}
+
+hist(permutedTestStats.lm, col = "skyblue")
+abline(v = observedTestStat.lm, col = "red", lwd = 3)
+
+2*sum(permutedTestStats.lm >= observedTestStat.lm)/N
+```
+
