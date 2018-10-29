@@ -47,8 +47,8 @@ library(plotly)
 #        legend=list(x=.6,y=.9))
 
   ggplot() +
-  geom_point(data = w_rent, aes( x = WalkMinutes, y = Cost), color = "blue") +
-  geom_point(data = ideal, aes( x = WalkMinutes, y = Cost), color = "orange") +
+  geom_point(data = w_rent, aes( x = WalkMinutes, y = Cost, size = Residents), color = "blue") +
+  geom_point(data = ideal, aes( x = WalkMinutes, y = Cost, size = Residents), color = "orange") +
     labs(title = "Approved Women's Housing", 
          x = "Distance from Campus (in Minutes)", 
          y = "Cost per Semester")
