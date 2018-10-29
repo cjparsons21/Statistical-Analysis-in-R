@@ -24,17 +24,9 @@ summary(w_rent$Cost)
 month<-14/4
 pay<-300
 pay_month<-month*pay+50
-ideal<-filter(w_rent,Cost<=pay_month,WalkMinutes<=5,Residents>=50)
+ideal <- filter(w_rent,Cost<=pay_month,WalkMinutes<=5,Residents>=50)
 
 head(ideal)
-
-
-
-
-#Do I leave it in the RStudio format or exported it to something else?
-
-#How has what I have been doing compare to what is expected of me?
-#I never really figured out the color thing and how to assign specific colors where I want them.Not a fan of these colors
 
 ```
 
@@ -58,21 +50,25 @@ The following chart shows all of the Approved Women's Housing in blue with my re
 
 ```{r message=FALSE, warning=FALSE}
 library(plotly)
-plot_ly() %>%
-  add_trace(data=w_rent,x=~WalkMinutes,y=~Cost, type="scatter",
-            size=~Residents,text=~paste(Apartment,'<br># Residents: ',Residents),
-            name='All Approved Housing') %>%
-  add_trace(data=ideal,x=~WalkMinutes,y=~Cost, type="scatter",
-            size=~Residents,text=~paste(Apartment,'<br># Residents: ',Residents),
-            name='Housing within Criteria') %>%
-  layout(title='Approved Women\'s Housing',
-         yaxis=list(title='Cost per Semester'),
-         xaxis=list(title='Distance from Campus (in Minutes)'),
-         legend=list(x=.6,y=.9))
+#plot_ly() %>%
+#  add_trace(data=w_rent,x=~WalkMinutes,y=~Cost, type="scatter",
+#            size=~Residents,text=~paste(Apartment,'<br># Residents: ',Residents),
+#            name='All Approved Housing') %>%
+#  add_trace(data=ideal,x=~WalkMinutes,y=~Cost, type="scatter",
+#            size=~Residents,text=~paste(Apartment,'<br># Residents: ',Residents),
+#            name='Housing within Criteria') %>%
+#  layout(title='Approved Women\'s Housing',
+#         yaxis=list(title='Cost per Semester'),
+#         xaxis=list(title='Distance from Campus (in Minutes)'),
+#        legend=list(x=.6,y=.9))
 
   ggplot() +
   geom_point(data = w_rent, aes( x = WalkMinutes, y = Cost), color = "blue") +
-  geom_point(data = ideal, aes( x = WalkMinutes, y = Cost), color = "orange")
+  geom_point(data = ideal, aes( x = WalkMinutes, y = Cost), color = "orange") +
+    labs(title = "Approved Women's Housing", 
+         x = "Distance from Campus (in Minutes)", 
+         y = "Cost per Semester")
+  ggsave("Approved Women's Housing.png")
 ```
 
 
