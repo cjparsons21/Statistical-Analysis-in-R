@@ -1,0 +1,98 @@
+---
+title: "Simple Logistic Regression of New Intakes"
+output: 
+  html_document:
+    theme: cerulean
+    code_folding: hide
+    keep_md: TRUE
+---
+```{r message=FALSE, warning=FALSE}
+
+library(ResourceSelection) 
+library(mosaic)
+library(pander)
+library(ggplot2)
+library(plotly)
+```
+
+```{r}
+
+PC_Data <- read.csv("~/Documents/Math_325/Data/PC_Data.csv", header = TRUE, sep = ",")
+
+```
+
+The following analysis is a simple logistic regression of the probability that a clinician will have a new intake based on how many appointments (excluding intakes) they have in a given week. The following goodness of fit test verifies the normality of the data with an α level of .05 which indicates a failure to reject the null based on a P-value of 0.1611. 
+
+
+```{r message=FALSE, warning=FALSE}
+PCD.glm <- glm(Intake>0 ~ Progress_Total, data=PC_Data, family=binomial)
+
+pander(hoslem.test(PCD.glm$y, PCD.glm$fitted, g=10))
+
+```
+
+This logistic regression will utilize the following model and hypothesis:
+
+$$
+  P(Y_i = 1|x_i) = \frac{e^{\beta_0+\beta_1 x_i}}{1+e^{\beta_0 + \beta_1 x_i}} = \pi_i
+$$
+A brief explaination of β1 is the this is the slope of the line. A β1 of zero means that there is no relationship between the two variables in question and one is incapable of indicating the other.
+
+The alternative hypothesis states that there is a relationship between the two and that the regression has a slope. (This is a good thing)
+
+$$
+  H_0: \beta_1 = 0 \\
+  H_a: \beta_1 \neq 0
+$$
+
+
+$$
+  α = .05
+$$
+
+A logistic regression analysis of the relationship between the number of intakes and how many clients are seen a week (excluding intakes) has provided the following results with a p-value of 0.0027. This means that there is enough evidence to reject the null hypothesis that there no slope. 
+
+```{r message=FALSE, warning=FALSE}
+pander(summary(PCD.glm))
+
+```
+
+The following chart is an interactive visual representation of the probability that a clinician will gain at least one new intake that week. You can hover over any point of the line and see the number of patients seen in a week in relation to the probability of taking on a new client. 1 is a guaranteed client and 0 is the guarantee that no client will be gained.
+
+```{r message=FALSE, warning=FALSE}
+
+#plot( Intake>0 ~ Progress_Total, data=PC_Data, main="", ylab='', pch=16)
+#curve(exp(0.06226+0.04315*x)/(1+exp(0.06226+0.04315*x)), from=-2, to=48, add=TRUE)
+
+PCD.gg <- ggplot(PC_Data, aes(x=PC_Data$Progress_Total, y=as.numeric(Intake>0)) ) + 
+  geom_point() + 
+  stat_smooth(method="glm", method.args= list(family="binomial"), se=FALSE)+
+  ggtitle("Logistic Regression") +
+  xlab("Number of Appointments per Week (Excluding Intakes)") + ylab("Probability of an Intake")
+ggsave("LogisticRegression.png")
+
+PCD.gg.ply <- plotly_build(PCD.gg)
+
+PCD.text=paste("", "",  sep="")    
+style( PCD.gg.ply, text=PCD.text, hoverinfo = "Axis", traces = c(1, 2) )
+
+
+
+```
+
+Note that a week with no clients seen still has over a 50% chance of a new intake. The fraction immediately below has the probability of a new intake with no clients seen that week. The one below that shows the probability of an intake with 45 patients.
+
+
+```{r message=FALSE, warning=FALSE}
+
+pander(predict(PCD.glm, data.frame(Progress_Total=0), type='response'))
+
+pander(predict(PCD.glm, data.frame(Progress_Total=45), type='response'))
+```
+
+Note that this test is called a "simple" logistic regression for a reason. This is a surface level analysis which does not take into account various factors which may be influencing this relationship. It may be that clinicians who see more patients work more or are trusted more are more likely to have more intakes. It may also be that more patients seen in a week leads to more outside people being willing to come in for an intake appointment. While the deeper factors simply can't be verified by this test, there is a proven relationship between clients seen in a week and the chance of a new intake being seen by that clinician.
+
+
+
+
+

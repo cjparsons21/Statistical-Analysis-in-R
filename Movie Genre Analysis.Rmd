@@ -1,0 +1,107 @@
+---
+title: "Movies"
+output:
+  html_document:
+    code_folding: hide
+    keed_md: TRUE
+    theme: cerulean
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r, include=FALSE}
+library(mosaic)
+library(DT) 
+library(plyr)
+library(plotly)
+library(tidyverse)
+library(pander)
+
+movies <- read_csv("../Data/movies.csv")
+movies2 <- read_csv("../Data/movies2.csv")
+
+colnames(movies)
+movies$type<- apply(movies[,c(18:24)], 1, sum)
+movies$type2 <- factor(mapvalues(movies$type, 0:4, c("No Genre", "One Genre",'Two Genres','Three Genres','Four Genres')), levels=rev(c("No Genre", "One Genre",'Two Genres','Three Genres','Four Genres')), ordered=T)
+
+movies$NumOfGenres <- factor(mapvalues(movies$type, 0:4, c("No Genre", "One Genre",'Two Genres','Three Genres','Four Genres')), levels=(c("No Genre", "One Genre",'Two Genres','Three Genres','Four Genres')), ordered=T)
+```
+
+
+<br />
+
+<!-- Instructions: Come up with an interesting question and answer it with the "movies" dataset that is provided above. 
+
+Write a Background that gives meaning to your question of interest.
+
+State your Question.
+
+Perform an appropriate "Analysis" that gives useful information for answering your question. The hope would be a really powerful graphic and some summary tables of supporting statistics.
+
+Interpret your analysis and expound on your findings. -->
+
+
+## Introduction
+It is a fact that movies can have any number of genres, the movies data frame includes 58,788 different titles ranging from no genres to five genres. My question is whether how many genres a movie has impacts its rating or not. Then, I want to know if the budget impacts the rating for these genres. I hypothesize that movies with more genres will have higher ratings and that movies with greater budgets will also have higher ratings.
+
+## Ratings of Each Genre Type
+After investigating the data further I was able to find that there is a relationship between a movie's rating and how many genres are associated with it. You will find the the median movie rating for each category will increase until there are five genres. The five genre category should be discounted because there are only two samples. We can speculate on why this is, but there is no data in this data frame to back up any theories. Although, my personal theory is that when a movie has several genres more people are willing to see it, but since it is multi-genred, those who favor a specific genre will enjoy it, but not love it. Thus lowering chances for extremely high ratings.
+
+```{r message=FALSE, warning=FALSE}
+plot_ly( data= movies,x= ~movies$type, y= ~movies$rating,type='box')%>%
+         layout(title='Summary of Ratings for Number of Genres',
+                yaxis=list(title='Movie Rating'),
+                xaxis=list(title='Number of Genres') )
+
+```
+
+## Correlation Between Rating and Buget for each Number of Genres
+After this initial analysis I wanted to know how the movie's budget factored into ratings. This led to some very interesting results.The graph below displays the budget of each movie with its rating. The color of each point relates to how many genres the movie has and scrolling over the point will display the title of each movie.
+
+```{r message=FALSE, warning=FALSE}
+
+plot_ly( data= movies,x= ~movies$budget, y= ~movies$rating, color=~movies$type2,alpha=.8,type='scatter',
+         text=~paste('Title: ',title, '<br>Release Year: ', year)) %>%
+  layout(title='Ratings of Movies',
+         yaxis=list(title='Movie Ratings'),
+         xaxis=list(title='Budget for Each Movie'))
+
+
+```
+ 
+This scatterplot shows that there is at most, a limited relationship between movie budgets and rating. Those who spent over 100 million dollars on a movie are most likely to get a rating around 6, with the historical max rating capped at 8. On the flipside, movies with budgets of 3 million dollars or less, have the highest spread of ratings, although there are a few outliers.
+
+While a chart is nice to visualize this data, it is impossible to view the specifics of it, so I calculated the specific correlation between movie rating and budget for each number of genres. The surprising result is that there is no real correlation between them at all for any genre.
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+
+pander(ddply(na.omit(movies),.(NumOfGenres),summarize,
+      correlation = cor(rating,budget)))
+
+
+```
+
+----------------------------
+ # of Genres   correlation 
+-------------- -------------
+   No Genre      0.1012    
+
+  One Genre     -0.0422   
+
+  Two Genres    -0.1313   
+
+ Three Genres   -0.07265   
+
+ Four Genres     0.06577   
+----------------------------
+## Final Thoughts and Speculative Data Interpretation
+Although there is no data available to support the following thought in this data frame, it seems likely that movies with lower budgets which focus on quality filming techniques and relating with the viewer may be the ones with the best ratings, while high budget movies trade quality storytelling techniques for special effects. If this hypothesis were true, that would mean that people value a good story over a cool movie with many special effects.
+
+[Details](https://vincentarelbundock.github.io/Rdatasets/doc/ggplot2/movies.html) for the movies dataset.
+
+
+
+
+
