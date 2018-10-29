@@ -66,9 +66,6 @@ The data records the number of correctly recalled words (out of the 40 possible)
 ## My Analysis:
 
 
-
-
-
 ## Pre-Analysis Disclaimer
 While the results from this experiment has the potential to be revolutionary in the world of learning, there are some things to take into consideration before going through the data and especially before drawing any conclusions. The first is that there are only ten samples for each test. This is not a large enough sample size to accurately represent the whole population. The other main thing to keep in mind when it comes to seeing numbers or visualizations of the data is that there may be less spread than there first seems to be.
 Within this analysis I will be testing both the Before and Meshed methods against SFR with a standard .95 confidence level. Since I am testing two things against SFR each will receive half of α, giving each an α of .025.
@@ -176,17 +173,4 @@ ggsave("Recall for Different Testing Methods.png")
 </div>
 
 <br />
-
-
-<!-- Begin writing your analysis below here. -->
-
-<!-- Note that your goal is to use the Friendly data to show whether or not the Meshed or Before methods have any positive benefit on memory recall. -->
-
-
-
-
-
-
-
-
 

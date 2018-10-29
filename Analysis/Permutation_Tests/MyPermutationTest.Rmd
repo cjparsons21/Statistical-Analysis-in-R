@@ -23,7 +23,7 @@ z_ccf<-(Utilities$ccf-mean(Utilities$ccf))/sd(Utilities$ccf)
 ```
 
 ```{r}
-late <- read.csv("~/Documents/M325_Git/Data/late.csv", header=TRUE)
+late <- read.csv("~/Documents/Math_325/Data/late.csv", header=TRUE)
 Late <- reshape(late,
                 varying = paste("Week",1:20, sep=""), 
                 v.names = "No.ofLateChildren",
@@ -37,7 +37,7 @@ Late$Proportion<- round(Late$No.ofLateChildren/Late$No.ofChidren,2)
 ```
 
 ```{r}
-AMZN <- read.csv("~/Documents/M325_Git/Data/AMZN-stock.csv")
+AMZN <- read.csv("~/Documents/Math_325/Data/AMZN-stock.csv")
 AMZN$month <- month(strptime(AMZN$Date, format="%Y-%m-%d"))
 AMZN$year <- year(strptime(AMZN$Date, format="%Y-%m-%d"))
 AMZN$oc_diff <- AMZN$Close-AMZN$Open
@@ -79,7 +79,7 @@ Permutation of ANOVA analysis
 
 Late.aov <- aov(data=Late,Proportion~Treatment+ Period +Treatment:Period)
 observedTestStat.a <- summary(Late.aov)[[1]]$`F value`[1]
-pander(summary(Late.aov))
+summary(Late.aov)
 
 N <- 2000
 permutedTestStats.a <- rep(NA, N)
@@ -102,7 +102,7 @@ Permutation of a linear regression analysis
 
 AMZN_lm <- lm(Close~Open, data=AMZN)
 observedTestStat.lm <- summary(AMZN_lm)[[4]][2,3]
-pander(summary(AMZN_lm))
+summary(AMZN_lm)
 
 N <- 2000
 permutedTestStats.lm <- rep(NA, N)

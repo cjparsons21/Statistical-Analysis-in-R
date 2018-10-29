@@ -43,7 +43,7 @@ library(pander)
 library(tidyverse)
 library(plotly)
 library(mosaic)
-CarPrices <- read.csv("~/Documents/M325_Git/Data/CarPrices.csv", header=TRUE)
+CarPrices <- read.csv("~/Documents/Math_325/Data/CarPrices.csv", header=TRUE)
 CarPrices.Ex <- droplevels(filter(CarPrices,Price>= 39000))
 CarType.Ex.lm <- lm(data=CarPrices.Ex, Price~Mileage + interaction(Model,Type))
 # Remember, to get the CarPrices data into your Console you have
@@ -72,48 +72,44 @@ After performing a linear regression test I have found that every car tyoe had a
 
 
 ```r
-pander(summary(CarType.Ex.lm))
+summary(CarType.Ex.lm)
 ```
 
-
--------------------------------------------------------------------------
-          &nbsp;             Estimate   Std. Error   t value   Pr(>|t|)  
---------------------------- ---------- ------------ --------- -----------
-      **(Intercept)**         49073       409.1       119.9    7.806e-54 
-
-        **Mileage**          -0.3978     0.01506     -26.41    2.317e-27 
-
-   **interaction(Model,       21331       449.3       47.47    1.837e-37 
- Type)XLR-V8.Convertible**                                               
-
-   **interaction(Model,       -5747       572.5      -10.04    1.311e-12 
-   Type)Corvette.Coupe**                                                 
-
-   **interaction(Model,        3644       450.5       8.087    5.036e-10 
-    Type)CST-V.Sedan**                                                   
-
-   **interaction(Model,       -3355        485       -6.916    2.163e-08 
-   Type)Deville.Sedan**                                                  
-
-   **interaction(Model,       -5166       739.8      -6.983    1.741e-08 
-    Type)STS-V6.Sedan**                                                  
-
-   **interaction(Model,        1190       456.7       2.605     0.01273  
-    Type)STS-V8.Sedan**                                                  
--------------------------------------------------------------------------
-
-
---------------------------------------------------------------
- Observations   Residual Std. Error   $R^2$    Adjusted $R^2$ 
--------------- --------------------- -------- ----------------
-      49               904.2          0.9915        0.99      
---------------------------------------------------------------
-
-Table: Fitting linear model: Price ~ Mileage + interaction(Model, Type)
-
-
-
-
+```
+## 
+## Call:
+## lm(formula = Price ~ Mileage + interaction(Model, Type), data = CarPrices.Ex)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2112.30  -513.35   -29.96   631.70  1868.59 
+## 
+## Coefficients:
+##                                              Estimate Std. Error t value
+## (Intercept)                                 4.907e+04  4.091e+02 119.942
+## Mileage                                    -3.978e-01  1.506e-02 -26.411
+## interaction(Model, Type)XLR-V8.Convertible  2.133e+04  4.493e+02  47.472
+## interaction(Model, Type)Corvette.Coupe     -5.747e+03  5.725e+02 -10.038
+## interaction(Model, Type)CST-V.Sedan         3.644e+03  4.505e+02   8.087
+## interaction(Model, Type)Deville.Sedan      -3.355e+03  4.850e+02  -6.916
+## interaction(Model, Type)STS-V6.Sedan       -5.166e+03  7.398e+02  -6.983
+## interaction(Model, Type)STS-V8.Sedan        1.190e+03  4.567e+02   2.605
+##                                            Pr(>|t|)    
+## (Intercept)                                 < 2e-16 ***
+## Mileage                                     < 2e-16 ***
+## interaction(Model, Type)XLR-V8.Convertible  < 2e-16 ***
+## interaction(Model, Type)Corvette.Coupe     1.31e-12 ***
+## interaction(Model, Type)CST-V.Sedan        5.04e-10 ***
+## interaction(Model, Type)Deville.Sedan      2.16e-08 ***
+## interaction(Model, Type)STS-V6.Sedan       1.74e-08 ***
+## interaction(Model, Type)STS-V8.Sedan         0.0127 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 904.2 on 41 degrees of freedom
+## Multiple R-squared:  0.9915,	Adjusted R-squared:   0.99 
+## F-statistic: 682.5 on 7 and 41 DF,  p-value: < 2.2e-16
+```
 
 
 
@@ -134,7 +130,7 @@ abline(CarType.Ex.lm$coef[1]+CarType.Ex.lm$coef[8], CarType.Ex.lm$coef[2], col=p
 legend("topright",CarType.Ex.lm$xlevels$`interaction(Model, Type)`, lty=1, lwd=5, col=palette(), cex=0.7)
 ```
 
-![](CarPrices_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](CarPrices_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 
 

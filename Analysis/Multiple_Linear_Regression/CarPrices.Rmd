@@ -42,7 +42,7 @@ library(pander)
 library(tidyverse)
 library(plotly)
 library(mosaic)
-CarPrices <- read.csv("~/Documents/M325_Git/Data/CarPrices.csv", header=TRUE)
+CarPrices <- read.csv("~/Documents/Math_325/Data/CarPrices.csv", header=TRUE)
 CarPrices.Ex <- droplevels(filter(CarPrices,Price>= 39000))
 CarType.Ex.lm <- lm(data=CarPrices.Ex, Price~Mileage + interaction(Model,Type))
 # Remember, to get the CarPrices data into your Console you have
@@ -64,7 +64,7 @@ After performing a linear regression test I have found that every car tyoe had a
 
 ```{r message=FALSE, warning=FALSE}
 
-pander(summary(CarType.Ex.lm))
+summary(CarType.Ex.lm)
 ```
 
 
@@ -80,14 +80,6 @@ pander(summary(CarType.Ex.lm))
 #yCorvette.Con <- predict(CarType.Ex.lm, data.frame(Model="Corvette", Type="Convertable",Mileage=x))
 #yCorvette.Cou <- predict(CarType.Ex.lm, data.frame(Model="Corvette", Type="Coupe",Mileage=x))
 ```
-
-```{r}
-
-
-
-```
-
-
 
 
 ```{r message=FALSE, warning=FALSE}

@@ -26,7 +26,7 @@ z_ccf<-(Utilities$ccf-mean(Utilities$ccf))/sd(Utilities$ccf)
 
 
 ```r
-late <- read.csv("~/Documents/M325_Git/Data/late.csv", header=TRUE)
+late <- read.csv("~/Documents/Math_325/Data/late.csv", header=TRUE)
 Late <- reshape(late,
                 varying = paste("Week",1:20, sep=""), 
                 v.names = "No.ofLateChildren",
@@ -41,7 +41,7 @@ Late$Proportion<- round(Late$No.ofLateChildren/Late$No.ofChidren,2)
 
 
 ```r
-AMZN <- read.csv("~/Documents/M325_Git/Data/AMZN-stock.csv")
+AMZN <- read.csv("~/Documents/Math_325/Data/AMZN-stock.csv")
 AMZN$month <- month(strptime(AMZN$Date, format="%Y-%m-%d"))
 AMZN$year <- year(strptime(AMZN$Date, format="%Y-%m-%d"))
 AMZN$oc_diff <- AMZN$Close-AMZN$Open
@@ -93,7 +93,7 @@ abline(v = observedTestStat.t, col = "red", lwd = 3)
 ```
 
 ```
-## [1] 1.002
+## [1] 1.018
 ```
 
 Permutation of ANOVA analysis
@@ -102,23 +102,18 @@ Permutation of ANOVA analysis
 ```r
 Late.aov <- aov(data=Late,Proportion~Treatment+ Period +Treatment:Period)
 observedTestStat.a <- summary(Late.aov)[[1]]$`F value`[1]
-pander(summary(Late.aov))
+summary(Late.aov)
 ```
 
-
----------------------------------------------------------------------
-        &nbsp;          Df    Sum Sq   Mean Sq   F value    Pr(>F)   
----------------------- ----- -------- --------- --------- -----------
-    **Treatment**        1    1.555     1.555     52.3     1.073e-11 
-
-      **Period**         2    0.743    0.3715     12.49    7.876e-06 
-
- **Treatment:Period**    2    0.7521    0.376     12.65    6.878e-06 
-
-    **Residuals**       194   5.769    0.02973     NA         NA     
----------------------------------------------------------------------
-
-Table: Analysis of Variance Model
+```
+##                   Df Sum Sq Mean Sq F value   Pr(>F)    
+## Treatment          1  1.555  1.5552   52.30 1.07e-11 ***
+## Period             2  0.743  0.3715   12.49 7.88e-06 ***
+## Treatment:Period   2  0.752  0.3760   12.65 6.88e-06 ***
+## Residuals        194  5.769  0.0297                     
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
 
 ```r
 N <- 2000
@@ -149,26 +144,29 @@ Permutation of a linear regression analysis
 ```r
 AMZN_lm <- lm(Close~Open, data=AMZN)
 observedTestStat.lm <- summary(AMZN_lm)[[4]][2,3]
-pander(summary(AMZN_lm))
+summary(AMZN_lm)
 ```
 
-
---------------------------------------------------------------
-     &nbsp;        Estimate   Std. Error   t value   Pr(>|t|) 
------------------ ---------- ------------ --------- ----------
- **(Intercept)**    0.101       0.2685     0.3762     0.7068  
-
-    **Open**          1       0.0005056     1978        0     
---------------------------------------------------------------
-
-
---------------------------------------------------------------
- Observations   Residual Std. Error   $R^2$    Adjusted $R^2$ 
--------------- --------------------- -------- ----------------
-     2119              7.231          0.9995       0.9995     
---------------------------------------------------------------
-
-Table: Fitting linear model: Close ~ Open
+```
+## 
+## Call:
+## lm(formula = Close ~ Open, data = AMZN)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -79.220  -2.788  -0.074   2.940  81.337 
+## 
+## Coefficients:
+##              Estimate Std. Error  t value Pr(>|t|)    
+## (Intercept) 0.1010142  0.2684914    0.376    0.707    
+## Open        0.9999575  0.0005056 1977.891   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.231 on 2117 degrees of freedom
+## Multiple R-squared:  0.9995,	Adjusted R-squared:  0.9995 
+## F-statistic: 3.912e+06 on 1 and 2117 DF,  p-value: < 2.2e-16
+```
 
 ```r
 N <- 2000

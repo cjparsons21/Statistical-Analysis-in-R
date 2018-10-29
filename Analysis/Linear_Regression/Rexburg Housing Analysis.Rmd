@@ -18,7 +18,7 @@ library(pander)
 library(tidyverse)
 library(plotly)
 
-Rent <- read.csv("~/Documents/M325_Git/Data/Rent.csv", header=TRUE)
+Rent <- read.csv("~/Documents/Math_325/Data/Rent.csv", header=TRUE)
 w_rent<-subset(Rent,Gender=='F')
 summary(w_rent$Cost)
 month<-14/4
@@ -70,6 +70,9 @@ plot_ly() %>%
          xaxis=list(title='Distance from Campus (in Minutes)'),
          legend=list(x=.6,y=.9))
 
+  ggplot() +
+  geom_point(data = w_rent, aes( x = WalkMinutes, y = Cost), color = "blue") +
+  geom_point(data = ideal, aes( x = WalkMinutes, y = Cost), color = "orange")
 ```
 
 
@@ -85,7 +88,7 @@ While this analysis was done for an assignment, it was interesting to notice tha
 
 ```{r}
 housing_lm <- lm(data = w_rent, Cost ~ WalkMinutes)
-pander(summary(housing_lm))
+summary(housing_lm)
 ```
 
 
