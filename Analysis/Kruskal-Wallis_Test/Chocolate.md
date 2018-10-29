@@ -118,26 +118,23 @@ I had assumed that the different country would have better ratings than the othe
 
 
 ```r
-pander(choc.loc %>%
+choc.loc %>%
   group_by(Location) %>%
   summarize( Num_of_Samples= n(),
              Median_Rating= median(Rating),
              Max_Rating= as.integer(max(Rating)),
-             Third_Quantile= quantile(Rating,.75)))
+             Third_Quantile= quantile(Rating,.75))
 ```
 
-
--------------------------------------------------------------------------
- Location   Num_of_Samples   Median_Rating   Max_Rating   Third_Quantile 
----------- ---------------- --------------- ------------ ----------------
-  Canada         124             3.25            4             3.75      
-
-  France         156             3.25            4            3.562      
-
-   U.K.           96               3             4             3.5       
-
-  U.S.A.         764             3.25            4             3.5       
--------------------------------------------------------------------------
+```
+## # A tibble: 4 x 5
+##   Location Num_of_Samples Median_Rating Max_Rating Third_Quantile
+##   <chr>             <int>         <dbl>      <int>          <dbl>
+## 1 Canada              124          3.25          4           3.75
+## 2 France              156          3.25          4           3.56
+## 3 U.K.                 96          3.00          4           3.50
+## 4 U.S.A.              764          3.25          4           3.50
+```
 
 While this indicates that the U.K. produces lower quality chocolate than Canada, France and the United States, the Kruskal-Wallis test has revealed only that this data is worth further investigation. There is no way to know more without a deeper and more specific analysis.
 

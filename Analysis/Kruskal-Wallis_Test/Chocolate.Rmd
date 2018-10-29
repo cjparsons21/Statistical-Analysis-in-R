@@ -102,12 +102,12 @@ ggsave("Chocolate Bar Ratings.png")
 I had assumed that the different country would have better ratings than the others, but my assumption is that the outliers may have actually had slightly lower rater chocolate. Three of the countries had a median rating of 3.25 while the U.K. had a slightly lower median rating could be the different population. The other possiblity is that Canada is the different population since their chocolate has a higher third quantile than the others.
 
 ```{r message=FALSE, warning=FALSE}
-pander(choc.loc %>%
+choc.loc %>%
   group_by(Location) %>%
   summarize( Num_of_Samples= n(),
              Median_Rating= median(Rating),
              Max_Rating= as.integer(max(Rating)),
-             Third_Quantile= quantile(Rating,.75)))
+             Third_Quantile= quantile(Rating,.75))
 ```
 
 While this indicates that the U.K. produces lower quality chocolate than Canada, France and the United States, the Kruskal-Wallis test has revealed only that this data is worth further investigation. There is no way to know more without a deeper and more specific analysis.
